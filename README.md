@@ -39,3 +39,13 @@ A estrutura desta pasta é a skill. Copia a pasta para o diretório de skills re
 
 Nunca coloques API keys ou ficheiros .env no repositório. As operações reais dependem das credenciais, ferramentas e permissões configuradas no ambiente do agente.
 # hellena-skill
+
+## Assets de teste
+
+- `examples/mock-playground.html`: playground visual autónomo para pesquisar produtos mock, filtrar stock e experimentar respostas de tools conceptuais. Abre o ficheiro diretamente no browser; não faz chamadas à API.
+- `examples/sdk-read-products.ts`: exemplo de leitura pelo SDK oficial, para ambiente de servidor com `HELLENA_API_KEY` configurada.
+- `assets/fixtures/products.json`: catálogo fictício para testes de agentes e interfaces.
+- `assets/fixtures/order-calculation.json`: cenário mock de cálculo de portes e desconto.
+- `tests/agent-test-cases.md`: casos para testar segurança, chamadas simuladas, erros e fluxos de encomenda.
+
+**Importante:** fixtures e playground são exclusivamente de demonstração. Nunca usar os seus preços, stock, IDs ou totais como dados reais, nem enviar automaticamente estes fixtures para a API de produção.

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hellena Skill · Mock Playground</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2d;--line:#26334d;--text:#edf3ff;--muted:#93a4c4;--accent:#7c9cff;--green:#8ee0bd}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#1a2a4c 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,sans-serif}
+main{max-width:1100px;margin:auto;padding:36px 20px 60px}.eyebrow{color:var(--green);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px}
+h1{font-size:clamp(30px,5vw,48px);letter-spacing:-.04em;margin:8px 0}p{color:var(--muted)}.notice{padding:12px 15px;border:1px solid #725c2e;background:#302817;border-radius:12px;color:#ffe4a6;margin:22px 0}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:rgba(18,26,45,.92);border:1px solid var(--line);border-radius:18px;padding:20px;min-width:0}
+h2{font-size:18px;margin:0 0 14px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+button{border:1px solid #384967;background:#1a2740;color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer;font:inherit}
+button:hover,button[aria-pressed=true]{border-color:var(--accent);background:#26385c}button.primary{background:var(--accent);color:#0b1020;border-color:transparent;font-weight:700}
+input{width:100%;background:#0b1222;color:var(--text);border:1px solid var(--line);padding:11px 12px;border-radius:10px;margin:0 0 12px;font:inherit}
+.product{padding:13px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}.product:last-child{border-bottom:0}.product small{display:block;color:var(--muted);margin-top:3px}.price{white-space:nowrap;font-weight:700}.pill{font-size:11px;color:var(--green);border:1px solid #315e54;padding:2px 7px;border-radius:999px}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;background:#080d18;padding:15px;border-radius:12px;min-height:200px;color:#c8d8ff;font:12px/1.65 ui-monospace,monospace}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.status{color:var(--green);font-size:12px;margin-top:12px}
+footer{margin-top:20px;color:var(--muted);font-size:12px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}main{padding:24px 14px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Hellena · Agent Skills</div>
+  <h1>Mock Playground</h1>
+  <p>Pequeno ambiente visual para experimentar cenários de um agente Hellena sem credenciais, chamadas HTTP ou alterações reais.</p>
+  <div class="notice"><strong>Modo demonstração:</strong> todos os produtos, preços, stock e respostas são fictícios. Esta página funciona localmente e não liga à API nem a um servidor MCP.</div>
+  <div class="layout">
+    <section class="panel">
+      <h2>Catálogo de demonstração</h2>
+      <input id="search" type="search" placeholder="Pesquisar produtos…" aria-label="Pesquisar produtos">
+      <div class="toolbar">
+        <button data-filter="all" aria-pressed="true">Todos</button>
+        <button data-filter="available" aria-pressed="false">Com stock</button>
+        <button data-filter="out" aria-pressed="false">Sem stock</button>
+      </div>
+      <div id="products" aria-live="polite"></div>
+    </section>
+    <section class="panel">
+      <h2>Simulador de tool</h2>
+      <p>Escolhe uma operação conceptual para observar o formato de uma resposta mock.</p>
+      <div class="toolbar">
+        <button class="primary" data-tool="hellena.products.list">Listar produtos</button>
+        <button data-tool="hellena.orders.calculate_shipping">Calcular portes</button>
+        <button data-tool="hellena.orders.calculate_coupon_discount">Calcular cupão</button>
+        <button data-tool="hellena.organization.get_info">Consultar organização</button>
+      </div>
+      <pre id="output" aria-live="polite">Seleciona uma operação para ver uma resposta simulada.</pre>
+      <div class="actions"><button id="copy">Copiar JSON</button><button id="reset">Limpar</button></div>
+      <div id="status" class="status" role="status">Nenhuma chamada real foi efetuada.</div>
+    </section>
+  </div>
+  <footer>Uso interno para testar prompts, estados vazios e respostas estruturadas. As tools apresentadas são nomes conceptuais documentados em references/mcp-tools.md.</footer>
+</main>
+<script>
+const products=[
+ {id:"prod_demo_001",name:"Auscultadores Bluetooth",price:18500,stock:12,category:"Eletrónica"},
+ {id:"prod_demo_002",name:"Garrafa térmica 750 ml",price:7200,stock:24,category:"Casa"},
+ {id:"prod_demo_003",name:"Mochila urbana",price:14500,stock:0,category:"Acessórios"}
+];
+const mocks={
+ "hellena.products.list":{mock:true,tool:"hellena.products.list",data:{items:products,total:products.length,currency:"AOA"}},
+ "hellena.orders.calculate_shipping":{mock:true,tool:"hellena.orders.calculate_shipping",input:{province:"Luanda",municipality:"Kilamba Kiaxi"},data:{shipping:2500,currency:"AOA",estimated:true}},
+ "hellena.orders.calculate_coupon_discount":{mock:true,tool:"hellena.orders.calculate_coupon_discount",input:{code:"DEMO10",subtotal:32900},data:{discount:3290,currency:"AOA",applied:true}},
+ "hellena.organization.get_info":{mock:true,tool:"hellena.organization.get_info",data:{id:"org_demo_001",slug:"loja-demo",name:"Loja Demonstração",note:"Organização fictícia"}}
+};
+let filter="all";let lastResponse=null;
+const money=n=>new Intl.NumberFormat("pt-AO",{style:"currency",currency:"AOA",maximumFractionDigits:0}).format(n);
+function renderProducts(){
+ const q=document.querySelector("#search").value.trim().toLocaleLowerCase("pt");
+ const shown=products.filter(p=>(p.name+" "+p.category).toLocaleLowerCase("pt").includes(q))
+ .filter(p=>filter==="all"||(filter==="available"?p.stock>0:p.stock===0));
+ document.querySelector("#products").innerHTML=shown.length?shown.map(p=>'<div class="product"><div><strong>'+p.name+'</strong><small>'+p.category+' · '+(p.stock?"Stock mock: "+p.stock:"Sem stock (mock)")+'</small></div><div class="price">'+money(p.price)+'</div></div>').join():'<p>Não foram encontrados produtos neste cenário.</p>';
+}
+document.querySelector("#search").addEventListener("input",renderProducts);
+document.querySelectorAll("[data-filter]").forEach(btn=>btn.addEventListener("click",()=>{
+ filter=btn.dataset.filter;document.querySelectorAll("[data-filter]").forEach(b=>b.setAttribute("aria-pressed",String(b===btn)));renderProducts();
+}));
+document.querySelectorAll("[data-tool]").forEach(btn=>btn.addEventListener("click",()=>{
+ lastResponse=mocks[btn.dataset.tool];document.querySelector("#output").textContent=JSON.stringify(lastResponse,null,2);
+ document.querySelector("#status").textContent="Resposta MOCK exibida. Nenhuma chamada real foi efetuada.";
+}));
+document.querySelector("#copy").addEventListener("click",async()=>{
+ if(!lastResponse){document.querySelector("#status").textContent="Escolhe primeiro uma operação.";return;}
+ try{await navigator.clipboard.writeText(JSON.stringify(lastResponse,null,2));document.querySelector("#status").textContent="JSON mock copiado.";}
+ catch{document.querySelector("#status").textContent="Não foi possível aceder à área de transferência neste contexto.";}
+});
+document.querySelector("#reset").addEventListener("click",()=>{lastResponse=null;document.querySelector("#output").textContent="Seleciona uma operação para ver uma resposta simulada.";document.querySelector("#status").textContent="Nenhuma chamada real foi efetuada.";});
+renderProducts();
+</script>
+</body>
+</html>
