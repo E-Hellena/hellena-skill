@@ -1,15 +1,39 @@
 {
   "name": "hellena-skill",
   "version": "1.0.0",
-  "private": true,
+  "description": "Agent Skill para integrar agentes de IA com a plataforma Hellena e o SDK JavaScript oficial.",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "bin": {
+    "hellena-skill": "./dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "SKILL.md",
+    "references/",
+    "assets/",
+    "examples/",
+    "README.md"
+  ],
+  "keywords": [
+    "hellena",
+    "agent-skills",
+    "ai-agents",
+    "sdk",
+    "mcp"
+  ],
   "scripts": {
-    "validate": "bun run scripts/validate-skill.ts"
+    "build": "bun build index.ts --target=node --outfile=dist/index.js",
+    "validate": "bun run scripts/validate-skill.ts",
+    "prepack": "npm run validate && npm run build",
+    "pack": "npm pack",
+    "prepublishOnly": "npm run validate && npm run build",
+    "release": "npm publish"
   },
   "devDependencies": {
     "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^7"
   }
 }

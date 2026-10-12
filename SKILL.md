@@ -25,8 +25,8 @@ Usa estas instruções quando a tarefa do utilizador envolver a plataforma Helle
 Segue esta ordem:
 
 1. **Tool Hellena/MCP já configurada:** consulta as tools e respetivos schemas; escolhe a operação mais específica e passa apenas os argumentos exigidos.
-2. **SDK JavaScript/TypeScript oficial:** usa @hellena-sdk/hellena num ambiente backend autorizado. Consulta [a referência do SDK](references/sdk-reference.md).
-3. **API REST ou GraphQL:** usa apenas URLs, métodos, headers e schemas confirmados pela documentação ou pelo código do projeto. Consulta [as regras de integração](references/integration-and-security.md).
+2. **SDK JavaScript/TypeScript oficial:** usa @hellena-sdk/hellena num ambiente backend autorizado. Começa por [instalação e configuração](references/integration/getting-started.md) e consulta o [índice completo da integração](references/integration/README.md).
+3. **API REST ou GraphQL:** usa apenas URLs, métodos, headers e schemas confirmados pela documentação ou pelo código do projeto. Consulta [REST, GraphQL e tratamento de erros](references/integration/rest-graphql-errors.md) e as [regras gerais de integração e segurança](references/integration-and-security.md).
 4. **Sem acesso ou credenciais:** explica o que falta e fornece instruções/código para configurar o acesso; não simules uma chamada real.
 
 ## Fluxo de trabalho
@@ -37,6 +37,19 @@ Segue esta ordem:
 4. Antes de criar uma encomenda, apresenta um resumo do que será enviado quando isso for útil ou quando o utilizador ainda não tiver autorizado claramente a ação.
 5. Executa a operação com a integração disponível e trata erros sem expor secrets ou detalhes internos sensíveis.
 6. Resume o resultado, incluindo identificadores e estado apenas quando forem devolvidos pela API. Indica explicitamente qualquer passo ainda pendente, como concluir o pagamento.
+
+## Referências de integração por recurso
+
+Usa o índice em [references/integration/README.md](references/integration/README.md) para escolher a documentação específica:
+
+- [Configuração do SDK](references/integration/getting-started.md)
+- [Produtos](references/integration/products.md)
+- [Encomendas, portes, cupões e checkout](references/integration/orders.md)
+- [Comentários](references/integration/comments.md)
+- [Avaliações](references/integration/ratings.md)
+- [Pagamentos](references/integration/payments.md)
+- [Organização](references/integration/organization.md)
+- [REST, GraphQL e erros](references/integration/rest-graphql-errors.md)
 
 ## Capacidades conhecidas do SDK oficial
 
@@ -50,7 +63,13 @@ O SDK JavaScript documentado disponibiliza estas áreas:
 - **Organização:** consultar informações públicas e links sociais.
 - **Operações genéricas:** executar pedidos REST e operações GraphQL, quando a integração e os contratos forem conhecidos.
 
-Estes métodos não significam que todas as operações estejam disponíveis para qualquer organização ou credencial. Respeita a resposta efetiva da API.
+Estes métodos não significam que todas as operações estejam disponíveis para qualquer organização ou credencial. Respeita a resposta efetiva da API e confirma as assinaturas e os tipos na documentação específica antes de gerar código.
+
+## Assets e exemplos
+
+- Os exemplos TypeScript encontram-se em [examples/README.md](examples/README.md). São material de referência; confirma os efeitos de cada exemplo antes de o executar.
+- Os ficheiros em [assets/fixtures/](assets/fixtures/) destinam-se a testes e demonstrações. Não os trates como dados reais da Hellena nem uses os seus valores em encomendas ou pagamentos de produção.
+- Não assumes que os assets ou exemplos estão presentes em todos os ambientes; verifica os ficheiros efetivamente instalados.
 
 ## Segurança e ações financeiras
 
@@ -65,8 +84,8 @@ Estes métodos não significam que todas as operações estejam disponíveis par
 
 O catálogo conceptual encontra-se em [mcp-tools.md](references/mcp-tools.md). Estes nomes são propostas documentais, não ferramentas instaladas.
 
-## Referências
+## Outras referências
 
-- [Referência do SDK e métodos disponíveis](references/sdk-reference.md)
+- [Referência geral do SDK](references/sdk-reference.md)
 - [Integração, autenticação e segurança](references/integration-and-security.md)
 - Especificação Agent Skills: https://agentskills.io/specification
